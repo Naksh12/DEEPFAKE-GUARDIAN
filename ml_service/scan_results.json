@@ -1,6 +1,6 @@
 {
     "summary": {
-        "total_scanned": 82,
+        "total_scanned": 87,
         "deepfakes_found": 4
     },
     "all_results": [
@@ -577,6 +577,41 @@
             "prediction": "Real",
             "confidence": 86.16,
             "timestamp": "2026-02-08 09:21:28"
+        },
+        {
+            "source_url": "https://vk.com",
+            "image_url": "https://vk.com/images/mobile/icons/vk_logo_color_32.png",
+            "prediction": "Real",
+            "confidence": 94.33,
+            "timestamp": "2026-02-08 09:21:42"
+        },
+        {
+            "source_url": "https://vk.com",
+            "image_url": "https://sun6-22.userapi.com/ZdV8d-XHc_5GsnwSSBvJSCZ7Dv5TUEdZuQILrw/dTxtHF9uF1M.png",
+            "prediction": "Real",
+            "confidence": 85.91,
+            "timestamp": "2026-02-08 09:21:43"
+        },
+        {
+            "source_url": "https://vk.com",
+            "image_url": "https://sun6-21.userapi.com/6DD0xSghpEY4ZOnSoOQGo5hvOqZld01WrEb-dA/I-cI-hyWOi0.png",
+            "prediction": "Real",
+            "confidence": 96.2,
+            "timestamp": "2026-02-08 09:21:45"
+        },
+        {
+            "source_url": "https://vk.com",
+            "image_url": "https://top-fwz1.mail.ru/counter?id=2579437;pid=0;r=",
+            "prediction": "Real",
+            "confidence": 82.26,
+            "timestamp": "2026-02-08 09:21:46"
+        },
+        {
+            "source_url": "https://ok.ru",
+            "image_url": "https://top-fwz1.mail.ru/counter?id=87663567;js=na",
+            "prediction": "Real",
+            "confidence": 82.26,
+            "timestamp": "2026-02-08 09:21:55"
         }
     ]
 }
