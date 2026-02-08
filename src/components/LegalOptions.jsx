@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Shield, AlertTriangle, Download, ChevronRight, CheckCircle, ArrowLeft, ExternalLink } from 'lucide-react';
+import { Shield, AlertTriangle, Download, ChevronRight, CheckCircle, ArrowLeft, ExternalLink, X, Loader, Globe, Search } from 'lucide-react';
 import { generateCaseFile } from '../utils/pdfGenerator';
 
 const LegalOptions = ({ caseData, onBack }) => {
   const [downloaded, setDownloaded] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [showScanOverlay, setShowScanOverlay] = useState(false);
 
   const handleDownload = () => {
     try {
@@ -151,8 +152,232 @@ const LegalOptions = ({ caseData, onBack }) => {
     </div>
   );
 
+  const handlePlatformReport = () => {
+    setShowScanOverlay(true);
+  };
+
+  const ScanOverlay = () => {
+    const [websites, setWebsites] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [scanInitiated, setScanInitiated] = useState(false);
+    const [scanResults, setScanResults] = useState({});
+    const [stats, setStats] = useState({ total: 0, found: 0 });
+
+    // Initial load
+    React.useEffect(() => {
+        fetch('/api/v1/websites')
+            .then(res => {
+                if (!res.ok) throw new Error("Failed to connect to server");
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    setWebsites(data.websites);
+                    setLoading(false);
+                    initiateScan();
+                } else {
+                    throw new Error(data.error || "Failed to load website list");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                setError(err.message);
+                setLoading(false);
+            });
+    }, []);
+
+    // Helper to normalize URLs for matching
+    const normalizeUrl = (url) => {
+        if (!url) return '';
+        return url.replace(/\/$/, '').replace(/^https?:\/\/(www\.)?/, '');
+    };
+
+    // Polling for results
+    React.useEffect(() => {
+        if (loading || error) return;
+        
+        const pollInterval = setInterval(() => {
+            fetch('/api/v1/scan-results')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.all_results) {
+                        const resultsMap = {};
+                        data.all_results.forEach(r => {
+                            // Normalize Key from result
+                            const key = normalizeUrl(r.source_url);
+                            if (!resultsMap[key] || r.prediction === 'Fake') {
+                                resultsMap[key] = r;
+                            }
+                        });
+                        setScanResults(resultsMap);
+                        setStats({
+                            total: data.summary?.total_scanned || 0,
+                            found: data.summary?.deepfakes_found || 0
+                        });
+                    }
+                })
+                .catch(console.error);
+        }, 2000); 
+
+        return () => clearInterval(pollInterval);
+    }, [loading, error]);
+
+    const initiateScan = async () => {
+        if (scanInitiated) return;
+        setScanInitiated(true);
+        try {
+            await fetch('/api/v1/global-scan', { method: 'POST' });
+        } catch (e) {
+            console.error("Scan trigger failed", e);
+        }
+    };
+
+    const progressPercentage = websites.length > 0 ? (stats.total / websites.length) * 100 : 0;
+
+    return (
+        <div style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)',
+            zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '20px'
+        }}>
+            <div className="glass-card" style={{ 
+                width: '90%', maxWidth: '600px', maxHeight: '80vh', 
+                display: 'flex', flexDirection: 'column', position: 'relative', 
+                overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+            }}>
+                <button 
+                    onClick={() => setShowScanOverlay(false)}
+                    style={{ position: 'absolute', top: 15, right: 15, background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', cursor: 'pointer', zIndex: 10, padding: '6px', borderRadius: '50%' }}
+                >
+                    <X size={18} />
+                </button>
+
+                <div style={{ padding: '32px', borderBottom: '1px solid var(--border-color)', background: 'linear-gradient(to bottom, rgba(59, 130, 246, 0.1), transparent)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <div style={{ padding: '12px', background: 'rgba(59, 130, 246, 0.2)', borderRadius: '12px' }}>
+                                <Globe size={32} color="#60A5FA" />
+                            </div>
+                            <div>
+                                <h2 style={{ margin: 0, fontSize: '1.5rem', letterSpacing: '-0.5px' }}>Global Deepfake Scan</h2>
+                                <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                                    Active Real-time Monitoring
+                                </p>
+                            </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                             <div style={{ fontSize: '2rem', fontWeight: 700, color: stats.found > 0 ? '#F87171' : '#34D399' }}>
+                                {stats.found}
+                             </div>
+                             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                Deepfakes Detected
+                             </div>
+                        </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div style={{ background: 'rgba(255,255,255,0.05)', height: '6px', borderRadius: '3px', overflow: 'hidden', position: 'relative' }}>
+                        <div style={{ 
+                            width: `${progressPercentage}%`, 
+                            background: stats.found > 0 ? '#F87171' : '#3B82F6', 
+                            height: '100%', 
+                            transition: 'width 0.5s ease-out' 
+                        }} />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        <span>Scanning: {stats.total} / {websites.length} websites</span>
+                        <span>{Math.round(progressPercentage)}% Complete</span>
+                    </div>
+                </div>
+
+                <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+                    {loading ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '16px', color: 'var(--text-muted)' }}>
+                            <Loader className="spin" size={32} />
+                            <p>Connecting to secure server...</p>
+                        </div>
+                    ) : error ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '16px', color: '#F87171' }}>
+                            <AlertTriangle size={48} />
+                            <p style={{ textAlign: 'center' }}>{error}<br/><span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Please ensure the backend server is running.</span></p>
+                            <button onClick={() => window.location.reload()} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>Retry Connection</button>
+                        </div>
+                    ) : (
+                        <div style={{ display: 'grid', gap: '8px' }}>
+                            {websites.map((site, idx) => {
+                                const key = normalizeUrl(site);
+                                const result = scanResults[key];
+                                const isFake = result?.prediction === 'Fake';
+                                const isSafe = result?.prediction === 'Real';
+                                
+                                return (
+                                    <div key={idx} style={{ 
+                                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                        padding: '16px', 
+                                        background: isFake ? 'rgba(220, 38, 38, 0.1)' : 'rgba(255,255,255,0.02)', 
+                                        borderRadius: '12px', 
+                                        border: isFake ? '1px solid rgba(220, 38, 38, 0.3)' : '1px solid rgba(255,255,255,0.05)',
+                                        transition: 'all 0.2s'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', overflow: 'hidden' }}>
+                                            <div style={{ 
+                                                width: '32px', height: '32px', borderRadius: '8px', 
+                                                background: isFake ? 'rgba(220, 38, 38, 0.2)' : (isSafe ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255,255,255,0.05)'),
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                            }}>
+                                                {result ? (
+                                                    isFake ? <AlertTriangle size={16} color="#F87171" /> : <CheckCircle size={16} color="#34D399" />
+                                                ) : (
+                                                    <div style={{ 
+                                                        width: '8px', height: '8px', borderRadius: '50%', 
+                                                        background: '#60A5FA', boxShadow: '0 0 8px #60A5FA'
+                                                    }} className="pulse" />
+                                                )}
+                                            </div>
+                                            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.95rem', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{site}</span>
+                                        </div>
+                                        
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+                                            {result ? (
+                                                <div style={{ textAlign: 'right' }}>
+                                                    <div style={{ 
+                                                        fontSize: '0.85rem', 
+                                                        color: isFake ? '#F87171' : '#34D399',
+                                                        fontWeight: 700, letterSpacing: '0.5px'
+                                                    }}>
+                                                        {isFake ? 'THREAT DETECTED' : 'SAFE'}
+                                                    </div>
+                                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                                        {result.confidence}% Confidence
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: '20px' }}>
+                                                    <Search size={12} /> Scanning...
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+
+                <div style={{ padding: '16px', borderTop: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)', fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+                    <p style={{ margin: 0 }}>Scan running in secure background environment. This window can be minimized.</p>
+                </div>
+            </div>
+        </div>
+    );
+  };
+
   return (
     <div className="legal-options-container">
+      {showScanOverlay && <ScanOverlay />}
       {showGuide ? (
         <ReportingGuide />
       ) : (
@@ -194,8 +419,9 @@ const LegalOptions = ({ caseData, onBack }) => {
             <OptionCard
               icon={AlertTriangle}
               title="Platform Report"
-              description="Access direct reporting channels for major social platforms (Instagram, Meta, X/Twitter)."
-              link="https://help.instagram.com/contact/383679321740945" 
+              description="Initiate a global deepfake scan across all monitored websites."
+              badge="ACTION REQUIRED"
+              onClick={handlePlatformReport} 
             />
           </div>
         </>

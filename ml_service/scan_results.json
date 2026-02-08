@@ -1,0 +1,141 @@
+{
+    "summary": {
+        "total_scanned": 19,
+        "deepfakes_found": 1
+    },
+    "all_results": [
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66b3f60bcd82f68f2716490a_flickr%20horz%20logo-light.png",
+            "prediction": "Real",
+            "confidence": 86.61,
+            "timestamp": "2026-02-08 09:19:44"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66a3f743c2b81576e1086ed4_flickr%20horz%20logo.png",
+            "prediction": "Real",
+            "confidence": 73.91,
+            "timestamp": "2026-02-08 09:19:46"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66b3f60bcd82f68f2716490a_flickr%20horz%20logo-light.png",
+            "prediction": "Real",
+            "confidence": 86.61,
+            "timestamp": "2026-02-08 09:19:48"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66a3f743c2b81576e1086ed4_flickr%20horz%20logo.png",
+            "prediction": "Real",
+            "confidence": 73.91,
+            "timestamp": "2026-02-08 09:19:50"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66ba7c9da1c31a04c651ee06_Hero%201.avif",
+            "prediction": "Real",
+            "confidence": 86.23,
+            "timestamp": "2026-02-08 09:20:04"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66ba7f8b6ce1b219366751dd_Hero%202.avif",
+            "prediction": "Real",
+            "confidence": 72.69,
+            "timestamp": "2026-02-08 09:20:13"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66a3e263d52b01e743a74f34_photo-3-hm.avif",
+            "prediction": "Real",
+            "confidence": 77.5,
+            "timestamp": "2026-02-08 09:20:15"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66a3e2633570cc7dff765281_photo-4-hm.avif",
+            "prediction": "Real",
+            "confidence": 72.08,
+            "timestamp": "2026-02-08 09:20:16"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/67658e85a17b6a7436072ee9_avatar-1.avif",
+            "prediction": "Real",
+            "confidence": 65.23,
+            "timestamp": "2026-02-08 09:20:18"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/6765f70454596f274c167387_avatar-3.avif",
+            "prediction": "Real",
+            "confidence": 74.43,
+            "timestamp": "2026-02-08 09:20:18"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66a3e8ae2edf23b2ccd84da0_photo-5-hm.avif",
+            "prediction": "Real",
+            "confidence": 99.82,
+            "timestamp": "2026-02-08 09:20:19"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/671bc870f04a52bc3248fca9_photo-6-hm.avif",
+            "prediction": "Real",
+            "confidence": 65.54,
+            "timestamp": "2026-02-08 09:20:21"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/686bed2c201e3909aebe9938_email-2.jpg",
+            "prediction": "Real",
+            "confidence": 66.71,
+            "timestamp": "2026-02-08 09:20:23"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66a3ed818a23915310eb11cb_photo-7-hm.avif",
+            "prediction": "Fake",
+            "confidence": 51.29,
+            "timestamp": "2026-02-08 09:20:24"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66e33ec789323dd58e34fc26_inspiration-2.avif",
+            "prediction": "Real",
+            "confidence": 92.46,
+            "timestamp": "2026-02-08 09:20:25"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66a3f071a6be891c3601e679_photo-9-hm.avif",
+            "prediction": "Real",
+            "confidence": 80.84,
+            "timestamp": "2026-02-08 09:20:26"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/671bc7cb12e93afc27446e4c_grow-1.avif",
+            "prediction": "Real",
+            "confidence": 94.62,
+            "timestamp": "2026-02-08 09:20:27"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66b3f60bcd82f68f2716490a_flickr%20horz%20logo-light.png",
+            "prediction": "Real",
+            "confidence": 86.61,
+            "timestamp": "2026-02-08 09:20:28"
+        },
+        {
+            "source_url": "https://flickr.com",
+            "image_url": "https://combo.staticflickr.com/66a031f9fc343c5e42d965ca/66b112ba6f60b4a633c47713_CertifiedClimateNeutral_Primary_white.avif",
+            "prediction": "Real",
+            "confidence": 76.28,
+            "timestamp": "2026-02-08 09:20:37"
+        }
+    ]
+}

@@ -10,7 +10,7 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(cors());
@@ -99,6 +99,59 @@ app.post('/api/v1/analyze', upload.single('image'), (req, res) => {
         } else {
             console.error('Parse Error, Output:', dataString);
             res.status(500).json({ success: false, error: 'Failed to parse analysis results' });
+        }
+    });
+});
+
+// Global Scan Endpoint
+app.post('/api/v1/global-scan', (req, res) => {
+    const scriptPath = path.join(__dirname, '../ml_service/deepfake_scanner.py');
+    console.log(`[Global Scan] Initiating scan using ${scriptPath}`);
+
+    // Run Python Script in detached mode or just don't wait for it
+    const pythonProcess = spawn('python', [scriptPath], {
+        detached: true,
+        stdio: 'ignore'
+    });
+    
+    pythonProcess.unref();
+
+    res.json({ 
+        success: true, 
+        message: 'Global deepfake scan initiated in background.' 
+    });
+});
+
+// Get Websites List Endpoint
+app.get('/api/v1/websites', (req, res) => {
+    const websitesPath = path.join(__dirname, '../websites.txt');
+    fs.readFile(websitesPath, 'utf8', (err, data) => {
+        if (err) {
+            console.error("Error reading websites.txt:", err);
+            return res.status(500).json({ success: false, error: 'Failed to load website list' });
+        }
+        const websites = data.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+        res.json({ success: true, websites });
+    });
+});
+
+// Get Scan Results Endpoint
+app.get('/api/v1/scan-results', (req, res) => {
+    const resultsPath = path.join(__dirname, '../ml_service/scan_results.json');
+    if (!fs.existsSync(resultsPath)) {
+        return res.json({ success: true, results: [], summary: { total_scanned: 0 } });
+    }
+    
+    fs.readFile(resultsPath, 'utf8', (err, data) => {
+        if (err) {
+            console.error("Error reading results:", err);
+            return res.status(500).json({ success: false, error: 'Failed to load results' });
+        }
+        try {
+            const jsonData = JSON.parse(data);
+            res.json({ success: true, ...jsonData });
+        } catch (e) {
+            res.json({ success: true, results: [], summary: { total_scanned: 0 } });
         }
     });
 });
